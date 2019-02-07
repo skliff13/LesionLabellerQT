@@ -107,7 +107,11 @@ void Analyze75Read(const char * filename, AnalyzeImage * im, bool convertTo8bits
 		throw "Analyze data type is not DT_SIGNED_SHORT";
 	*/
 
-	short * dims = info.dims.dim;
+    for (int j = 0; j < im->slices.size(); j++)
+        im->slices[j].release();
+    im->slices.clear();
+
+    short * dims = info.dims.dim;
 	im->slices = Vector<Mat>(dims[3]);
 
 	MakeIMGFilename(filename, str);

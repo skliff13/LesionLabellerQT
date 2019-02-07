@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 
-#define WNDTITLE "Lesion Labeller v1.8.5"
+#define WNDTITLE "Lesion Labeller v1.8.6"
 #define PDFFILENAME "LesionLabellerQT_Doc.pdf"
 #define MAXRECUR 333494
 
@@ -119,11 +119,17 @@ void MainWindow::assignPalette()
 void MainWindow::prepareFrontalAndSagital(){
     UserData * ud = getUserData();
 
+    int k;
+    for (k = 0; k < frontalSlices.size(); k++)
+        frontalSlices[k].release();
+    for (k = 0; k < sagitalSlices.size(); k++)
+        sagitalSlices[k].release();
+
     frontalSlices.clear();
     sagitalSlices.clear();
 
     int nz0 = im3.slices.size();
-    int k = 0;
+    k = 0;
 
     for (int j = 0; j < im3.slices[0].cols; j++){
         Mat im0(nz0, im3.slices[0].rows, CV_16SC1, Scalar::all(-5000));
@@ -162,11 +168,17 @@ void MainWindow::prepareFrontalAndSagital(){
 void MainWindow::updateFrontalAndSagitalLabels(){
     UserData * ud = getUserData();
 
+    int k;
+    for (k = 0; k < frontalLabels.size(); k++)
+        frontalLabels[k].release();
+    for (k = 0; k < sagitalLabels.size(); k++)
+        sagitalLabels[k].release();
+
     frontalLabels.clear();
     sagitalLabels.clear();
 
     int nz0 = im3.slices.size();
-    int k = 0;
+    k = 0;
 
     for (int j = 0; j < im3.slices[0].cols; j++){
         Mat lb0(nz0, im3.slices[0].rows, CV_16SC1, Scalar::all(0));

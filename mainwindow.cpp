@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 
-#define WNDTITLE "Lesion Labeller v1.8.6"
+#define WNDTITLE "Lesion Labeller v1.8.7"
 #define PDFFILENAME "LesionLabellerQT_Doc.pdf"
 #define MAXRECUR 333494
 
@@ -337,7 +337,7 @@ void MainWindow::on_actionOpen_triggered()
             Analyze75Read(lblFilepath.toLatin1().data(), &lbl, true);
         }
 
-        ud->curSlice = im3.slices.size() / 2;
+        ud->curSlice = 0; // im3.slices.size() / 2; // requested by Tarasov
         ui->sldSlices->setMaximum(im3.slices.size() - 1);
         ud->z2xy = im3.hdrInfo.dims.pixdim[3] / im3.hdrInfo.dims.pixdim[1];
 
@@ -383,21 +383,26 @@ void MainWindow::processWheelEvent(QObject *obj, QEvent *event)
     UserData * ud = getUserData();
 
     QWheelEvent * we = (QWheelEvent *)event;
+    int num_slices = im3.slices.size();
+    if (num_slices == 0)
+        return;
 
     if (we->angleDelta().y() > 0){
         if (obj == this){
             ud->curSlice++;
-            ud->curSlice = ud->curSlice < int(im3.slices.size()) ? ud->curSlice : im3.slices.size() - 1;
-            redrawSlice();
+//            ud->curSlice = ud->curSlice < int(im3.slices.size()) ? ud->curSlice : im3.slices.size() - 1;
         }
     }
     if (we->angleDelta().y() < 0){
         if (obj == this){
             ud->curSlice--;
-            ud->curSlice = ud->curSlice >= 0 ? ud->curSlice : 0;
-            redrawSlice();
+            //ud->curSlice = ud->curSlice >= 0 ? ud->curSlice : 0;
         }
     }
+
+    // requested by Tarasov
+    ud->curSlice = (ud->curSlice + num_slices) % num_slices;
+    redrawSlice();
 }
 
 void MainWindow::processKeyEvent(QObject *obj, QEvent *event)
